@@ -4,7 +4,6 @@
 # GLOG_FOUND - system has Glog
 # GLOG_INCLUDE_DIRS - the Glog include directories
 # GLOG_LIBRARIES - link these to use Glog
-
 include(FindPackageHandleStandardArgs)
 
 find_library(GLOG_LIBRARY glog
@@ -23,3 +22,16 @@ mark_as_advanced(
 
 set(GLOG_LIBRARIES ${GLOG_LIBRARY})
 set(GLOG_INCLUDE_DIRS ${GLOG_INCLUDE_DIR})
+
+if (glog_FOUND)
+  MESSAGE("Found glog from package config")
+else()
+  find_package(GLog MODULE)
+endif()
+
+if(glog_FOUND AND NOT TARGET glog::glog)
+    add_library(glog::glog STATIC IMPORTED)
+    set_target_properties(glog::glog PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}"
+    )
+endif()
